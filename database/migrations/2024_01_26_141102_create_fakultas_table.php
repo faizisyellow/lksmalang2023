@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Perguruantinggi;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,6 +15,7 @@ return new class extends Migration
         Schema::create('fakultas', function (Blueprint $table) {
             $table->id();
             $table->string('nama_fakultas');
+            $table->foreignIdFor(Perguruantinggi::class,'id_perguruantinggi');
             $table->timestamps();
         });
     }

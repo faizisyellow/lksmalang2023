@@ -3,16 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\jurusan;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class JurusanController extends Controller
 {
+     protected $jurusan;
+     public function __construct( jurusan $jurusan) {
+    $this->jurusan = $jurusan;
+     }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         //
+    $all = jurusan::all();
+    return Controller::success('Menampilkan semua fakultas',$all);
     }
 
     /**
@@ -29,14 +36,28 @@ class JurusanController extends Controller
     public function store(Request $request)
     {
         //
+          $request->validate([
+        'nama_jurusan' => 'required',
+        'id_fakultas' => 'required',
+    ]);
+
+    $create = collect($request->only($this->jurusan->getFillable()))
+        ->put('jurusan', Carbon::now())
+        ->toArray();
+
+    $new = $this->jurusan->create($create);
+
+    return Controller::success('Berhasil membuat jurusan', $new);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(jurusan $jurusan)
+    public function show($id)
     {
         //
+        $data=$this->jurusan->findOrFail($id);
+        return Controller::success('Menampilkan jurusan',$data);
     }
 
     /**
@@ -50,16 +71,25 @@ class JurusanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, jurusan $jurusan)
+     public function update($id,Request $request)
     {
         //
-    }
+        $jurusan=$this->jurusan->findOrFail($id);
+        $update = collect($request->only($this->jurusan->getFillable()))
+        ->put('jurusan',Carbon::now())
+        ->toArray();
+        $jurusan->update($update);
 
+        return Controller::success('berhasil update',$jurusan);
+    }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(jurusan $jurusan)
+   public function destroy($id)
     {
         //
+        $this->jurusan->findOrFail($id)->delete();
+        return Controller::success('berhasil menghapus');
+
     }
 }
